@@ -1,0 +1,80 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class StatisticsCalculator {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Double> dataPoints = new ArrayList<>();
+
+        System.out.println("Enter data points (enter 'done' to finish input):");
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("done")) {
+                break;
+            }
+            try {
+                double value = Double.parseDouble(input);
+                dataPoints.add(value);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number or 'done' to finish input.");
+            }
+        }
+
+        if (dataPoints.isEmpty()) {
+            System.out.println("No data points entered.");
+            return;
+        }
+
+        Collections.sort(dataPoints);
+
+        double mean = calculateMean(dataPoints);
+        double median = calculateMedian(dataPoints);
+        double range = calculateRange(dataPoints);
+        double interquartileRange = calculateInterquartileRange(dataPoints);
+
+        System.out.println("Mean: " + mean);
+        System.out.println("Median: " + median);
+        System.out.println("Range: " + range);
+        System.out.println("Interquartile Range: " + interquartileRange);
+    }
+
+    private static double calculateMean(ArrayList<Double> data) {
+        double sum = 0;
+        for (double value : data) {
+            sum += value;
+        }
+        return sum / data.size();
+    }
+
+    private static double calculateMedian(ArrayList<Double> data) {
+        int size = data.size();
+        if (size % 2 == 0) {
+            int middle = size / 2;
+            double median1 = data.get(middle - 1);
+            double median2 = data.get(middle);
+            return (median1 + median2) / 2.0;
+        } else {
+            return data.get(size / 2);
+        }
+    }
+
+    private static double calculateRange(ArrayList<Double> data) {
+        return data.get(data.size() - 1) - data.get(0);
+    }
+
+    private static double calculateInterquartileRange(ArrayList<Double> data) {
+        int size = data.size();
+        int middle = size / 2;
+
+        if (size % 2 == 0) {
+            ArrayList<Double> lowerHalf = new ArrayList<>(data.subList(0, middle));
+            ArrayList<Double> upperHalf = new ArrayList<>(data.subList(middle, size));
+            return calculateMedian(upperHalf) - calculateMedian(lowerHalf);
+        } else {
+            ArrayList<Double> lowerHalf = new ArrayList<>(data.subList(0, middle));
+            ArrayList<Double> upperHalf = new ArrayList<>(data.subList(middle + 1, size));
+            return calculateMedian(upperHalf) - calculateMedian(lowerHalf);
+        }
+    }
+}
